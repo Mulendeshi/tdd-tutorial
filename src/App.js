@@ -41,7 +41,7 @@ function App() {
       const response = await fetch('https://jsonplaceholder.typicode.com/todos').then((response) => 
         response.json()
       );
-      setTodos(response.slice(0, 5));
+      setTodos(response.slice(0, 10));
       setIsLoading(false);
     }
     fetchData();

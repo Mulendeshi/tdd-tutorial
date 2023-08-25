@@ -1,8 +1,10 @@
+/* eslint-disable testing-library/no-unnecessary-act */
 import { fireEvent, render, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import App from './App';
 import fetchMock from 'jest-fetch-mock';
 import mockData from './mockData';
 import userEvent from '@testing-library/user-event';
+import { act } from 'react-dom/test-utils';
 
 beforeEach(() => {
   fetchMock.once(JSON.stringify(mockData));
@@ -28,7 +30,10 @@ describe('<App /> tests', () => {
     await waitForElementToBeRemoved(() => screen.queryByText(/loading/i));
 
     userEvent.type(screen.getByRole('textbox'), 'Attend meeting');
-    fireEvent.click(screen.getByText(/Add new todo/i));
+    act(() => {
+      return fireEvent.click(screen.getByText(/Add new todo/i));
+  })
+    
     await waitForElementToBeRemoved(() => screen.queryByText(/saving/i));
     const todo = screen.getByText(/Attend meeting/i);
     expect(todo).toBeInTheDocument();
@@ -37,7 +42,9 @@ describe('<App /> tests', () => {
   it('should remove todo from list', async() => {
     render(<App />);
     await waitForElementToBeRemoved(() => screen.queryByText(/loading/i));
-    userEvent.click(screen.getByTestId('close-btn-4'));
+    act(() => {
+      fireEvent.click(screen.getByTestId('close-btn-4'));
+  })
     const title = screen.queryByText(/write a blog post/i);
     expect(title).not.toBeInTheDocument();
   })
@@ -45,7 +52,12 @@ describe('<App /> tests', () => {
   it('todo item should be crossed out after completion', async () => {
     render(<App />);
     await waitForElementToBeRemoved(() => screen.queryByText(/loading/i));
-    userEvent.click(screen.getByTestId('checkbox-1'));
+           
+  act(() => {
+    fireEvent.click(screen.getByTestId('checkbox-1'));
+    
     expect(screen.getByText(/Eat breakfast/i)).toBeInTheDocument();
+})
+
   })
 })
